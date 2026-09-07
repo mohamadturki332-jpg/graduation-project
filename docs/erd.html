@@ -1,0 +1,281 @@
+<title>Help Desk ERD</title>
+<style>
+  :root {
+    --bg: #eef1ee; --panel: #ffffff; --panel-2: #f4f7f3;
+    --ink: #1b2129; --ink-soft: #55606d; --ink-faint: #8b96a3;
+    --line: #cfd6ce; --line-soft: #e6eae5;
+    --brand: #0f6b47; --brand-tint: #e4efe9; --brand-soft: #2f8d63;
+    --gold: #a9762f; --sky: #2f6fa8; --fk-bg: #eef3f8;
+    --shadow: 0 1px 2px rgba(20,30,25,.06), 0 10px 30px rgba(20,30,25,.05);
+    /* per-relationship link colors */
+    --l1:#2f6fa8; --l2:#c9761d; --l3:#8a4fc0; --l4:#1d8f98; --l5:#2e8b57; --l6:#c0392b; --l7:#8a7a2f;
+  }
+  :root:not([data-theme="light"]) {
+    @media (prefers-color-scheme: dark) {
+      --bg: #10151b; --panel: #1a222c; --panel-2: #212b36;
+      --ink: #e4e8ec; --ink-soft: #a4b0bd; --ink-faint: #6c7885;
+      --line: #313c48; --line-soft: #262f39;
+      --brand: #2f9068; --brand-tint: #17342a; --brand-soft: #5cae8b;
+      --gold: #c5a059; --sky: #6aa8e0; --fk-bg: #182631;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 34px rgba(0,0,0,.38);
+      --l1:#6aa8e0; --l2:#e0973f; --l3:#b483e0; --l4:#4fc0c9; --l5:#5cb07a; --l6:#e06a5a; --l7:#c6b25e;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151b; --panel: #1a222c; --panel-2: #212b36;
+    --ink: #e4e8ec; --ink-soft: #a4b0bd; --ink-faint: #6c7885;
+    --line: #313c48; --line-soft: #262f39;
+    --brand: #2f9068; --brand-tint: #17342a; --brand-soft: #5cae8b;
+    --gold: #c5a059; --sky: #6aa8e0; --fk-bg: #182631;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 12px 34px rgba(0,0,0,.38);
+    --l1:#6aa8e0; --l2:#e0973f; --l3:#b483e0; --l4:#4fc0c9; --l5:#5cb07a; --l6:#e06a5a; --l7:#c6b25e;
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font-family: ui-sans-serif, system-ui, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.45; padding: clamp(16px, 3vw, 34px) clamp(14px, 3vw, 32px) 40px;
+  }
+  .wrap { max-width: 1000px; margin: 0 auto; }
+  header.masthead { border-bottom: 1px solid var(--line); padding-bottom: 14px; margin-bottom: 16px; }
+  .eyebrow { font-size: 10.5px; letter-spacing: .22em; text-transform: uppercase; color: var(--brand-soft); font-weight: 700; margin: 0 0 7px; }
+  h1 { font-family: Georgia, "Times New Roman", serif; font-weight: 600; font-size: clamp(21px, 3.4vw, 30px); line-height: 1.1; margin: 0 0 7px; letter-spacing: -.01em; text-wrap: balance; }
+  .sub { color: var(--ink-soft); font-size: 14px; max-width: 66ch; margin: 0; }
+  .sub b { color: var(--ink); font-weight: 650; }
+
+  .keys { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); gap: 5px 20px; margin-top: 14px; }
+  .keys .k { display: flex; align-items: center; gap: 9px; font-size: 12px; color: var(--ink-soft); font-family: ui-monospace, Consolas, monospace; }
+  .keys .k b { color: var(--ink); font-weight: 700; }
+  .kl { width: 26px; height: 0; border-top: 3px solid; flex: none; position: relative; border-radius: 2px; }
+  .kl::after { content: ""; position: absolute; right: -1px; top: -4px; border-left: 7px solid; border-top: 3.5px solid transparent; border-bottom: 3.5px solid transparent; border-left-color: inherit; }
+  .kl.l1 { border-color: var(--l1); color: var(--l1); } .kl.l2 { border-color: var(--l2); color: var(--l2); }
+  .kl.l3 { border-color: var(--l3); color: var(--l3); } .kl.l4 { border-color: var(--l4); color: var(--l4); }
+  .kl.l5 { border-color: var(--l5); color: var(--l5); } .kl.l6 { border-color: var(--l6); color: var(--l6); }
+  .kl.l7 { border-color: var(--l7); color: var(--l7); }
+
+  figure { margin: 0; }
+  .canvas { overflow-x: auto; border: 1px solid var(--line); border-radius: 12px;
+    background: radial-gradient(circle at 1px 1px, var(--line-soft) 1px, transparent 0) 0 0 / 26px 26px, var(--panel-2);
+    box-shadow: var(--shadow); padding: 10px; }
+  svg.erd { display: block; width: 100%; min-width: 680px; height: auto; }
+
+  .box { fill: var(--panel); }
+  .boxln { fill: none; stroke: var(--line); stroke-width: 1.4; }
+  .boxln-core { stroke: var(--brand); stroke-width: 2; }
+  .hdr { fill: var(--panel-2); }
+  .hdr-core { fill: var(--brand-tint); }
+  .hdrline { stroke: var(--line); stroke-width: 1.2; }
+  .rowline { stroke: var(--line-soft); stroke-width: 1; }
+  .fkrow { fill: var(--fk-bg); }
+  .ttitle { fill: var(--ink); font-family: ui-monospace, "Cascadia Code", Consolas, monospace; font-size: 12.5px; font-weight: 700; }
+  .ttitle-core { fill: var(--brand); }
+  .ttag { fill: var(--ink-faint); font-family: ui-sans-serif, system-ui, sans-serif; font-size: 9.5px; font-weight: 600; letter-spacing: .04em; }
+  .cname { fill: var(--ink); font-family: ui-monospace, Consolas, monospace; font-size: 11.5px; }
+  .cname-fk { fill: var(--sky); font-weight: 600; }
+  .cname-pk { font-weight: 700; }
+  .ctype { fill: var(--ink-faint); font-family: ui-monospace, Consolas, monospace; font-size: 10px; }
+  .ctype-enum { fill: var(--gold); }
+  .ctype-ref { fill: var(--sky); }
+  .badge-pk { fill: var(--gold); font-family: ui-monospace, Consolas, monospace; font-size: 9px; font-weight: 700; }
+  .badge-fk { fill: var(--sky); font-family: ui-monospace, Consolas, monospace; font-size: 9px; font-weight: 700; }
+  .link { fill: none; stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
+  .l1 { stroke: var(--l1); } .l2 { stroke: var(--l2); } .l3 { stroke: var(--l3); }
+  .l4 { stroke: var(--l4); } .l5 { stroke: var(--l5); } .l6 { stroke: var(--l6); } .l7 { stroke: var(--l7); }
+  .dot { stroke: var(--panel); stroke-width: 1.4; }
+  .d1 { fill: var(--l1); } .d2 { fill: var(--l2); } .d3 { fill: var(--l3); }
+  .d4 { fill: var(--l4); } .d5 { fill: var(--l5); } .d6 { fill: var(--l6); } .d7 { fill: var(--l7); }
+  .f1 { fill: var(--l1); } .f2 { fill: var(--l2); } .f3 { fill: var(--l3); }
+  .f4 { fill: var(--l4); } .f5 { fill: var(--l5); } .f6 { fill: var(--l6); } .f7 { fill: var(--l7); }
+
+  footer { margin-top: 16px; color: var(--ink-faint); font-size: 11.5px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+  figcaption { margin-top: 12px; color: var(--ink-soft); font-size: 12.5px; max-width: 78ch; }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">NCT Help Desk · Database</p>
+    <h1>Ticket System — Entity Relationships</h1>
+    <p class="sub"><b>users</b> and <b>tickets</b> are the two core entities; every other table references them by a foreign key. Each relationship has its own color — follow the line from its dot (foreign key) to its arrow (the primary key it points at).</p>
+    <div class="keys">
+      <div class="k"><span class="kl l1"></span><b>tickets.user_id</b> → users.id</div>
+      <div class="k"><span class="kl l2"></span><b>tickets.agent_id</b> → users.id</div>
+      <div class="k"><span class="kl l3"></span><b>ticket_agent.user_id</b> → users.id</div>
+      <div class="k"><span class="kl l7"></span><b>comments.user_id</b> → users.id</div>
+      <div class="k"><span class="kl l5"></span><b>attachments.ticket_id</b> → tickets.id</div>
+      <div class="k"><span class="kl l6"></span><b>comments.ticket_id</b> → tickets.id</div>
+      <div class="k"><span class="kl l4"></span><b>ticket_agent.ticket_id</b> → tickets.id</div>
+    </div>
+  </header>
+
+  <figure>
+    <div class="canvas">
+      <svg class="erd" viewBox="0 0 1100 770" role="img"
+           aria-label="Compact entity relationship diagram with color-coded right-angle connectors. users (top centre) and tickets (centre) are core. tickets.user_id, tickets.agent_id, comments.user_id and ticket_agent.user_id reference users.id. attachments.ticket_id, comments.ticket_id and ticket_agent.ticket_id reference tickets.id.">
+        <defs>
+          <marker id="a1" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f1" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a2" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f2" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a3" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f3" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a4" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f4" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a5" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f5" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a6" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f6" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+          <marker id="a7" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path class="f7" d="M0,0 L10,5 L0,10 L3,5 Z"/></marker>
+        </defs>
+
+        <!-- ================= CONNECTORS (behind boxes) ================= -->
+        <g>
+          <!-- C1 tickets.user_id -> users.id -->
+          <path class="link l1" marker-end="url(#a1)" d="M410,549 L385,549 L385,70 L430,70" />
+          <circle class="dot d1" cx="410" cy="549" r="3.4" />
+          <!-- C2 tickets.agent_id -> users.id -->
+          <path class="link l2" marker-end="url(#a2)" d="M410,571 L370,571 L370,92 L430,92" />
+          <circle class="dot d2" cx="410" cy="571" r="3.4" />
+          <!-- C3 ticket_agent.user_id -> users.id (over the top-left) -->
+          <path class="link l3" marker-end="url(#a3)" d="M280,97 L320,97 L320,20 L470,20 L470,30" />
+          <circle class="dot d3" cx="280" cy="97" r="3.4" />
+          <!-- C4 ticket_agent.ticket_id -> tickets.id -->
+          <path class="link l4" marker-end="url(#a4)" d="M280,119 L360,119 L360,411 L410,411" />
+          <circle class="dot d4" cx="280" cy="119" r="3.4" />
+          <!-- C5 attachments.ticket_id -> tickets.id -->
+          <path class="link l5" marker-end="url(#a5)" d="M280,489 L350,489 L350,423 L410,423" />
+          <circle class="dot d5" cx="280" cy="489" r="3.4" />
+          <!-- C6 comments.ticket_id -> tickets.id -->
+          <path class="link l6" marker-end="url(#a6)" d="M800,461 L755,461 L755,417 L710,417" />
+          <circle class="dot d6" cx="800" cy="461" r="3.4" />
+          <!-- C7 comments.user_id -> users.id (up and over the top-right) -->
+          <path class="link l7" marker-end="url(#a7)" d="M800,439 L740,439 L740,18 L655,18 L655,30" />
+          <circle class="dot d7" cx="800" cy="439" r="3.4" />
+        </g>
+
+        <!-- ================= USERS (top centre) ================= -->
+        <g>
+          <rect class="box" x="430" y="30" width="250" height="268" rx="10" />
+          <path class="hdr-core" d="M430,40 a10,10 0 0 1 10,-10 h230 a10,10 0 0 1 10,10 v16 h-250 z" />
+          <line class="hdrline" x1="430" y1="56" x2="680" y2="56" />
+          <line class="rowline" x1="430" y1="78" x2="680" y2="78" /><line class="rowline" x1="430" y1="100" x2="680" y2="100" />
+          <line class="rowline" x1="430" y1="122" x2="680" y2="122" /><line class="rowline" x1="430" y1="144" x2="680" y2="144" />
+          <line class="rowline" x1="430" y1="166" x2="680" y2="166" /><line class="rowline" x1="430" y1="188" x2="680" y2="188" />
+          <line class="rowline" x1="430" y1="210" x2="680" y2="210" /><line class="rowline" x1="430" y1="232" x2="680" y2="232" />
+          <line class="rowline" x1="430" y1="254" x2="680" y2="254" /><line class="rowline" x1="430" y1="276" x2="680" y2="276" />
+          <rect class="boxln boxln-core" x="430" y="30" width="250" height="268" rx="10" />
+          <text class="ttitle ttitle-core" x="444" y="49">users</text>
+          <text class="ttag" x="666" y="48" text-anchor="end">ACCOUNTS</text>
+          <text class="badge-pk" x="444" y="71">PK</text>
+          <text class="cname cname-pk" x="470" y="71">id</text><text class="ctype" x="666" y="71" text-anchor="end">bigint</text>
+          <text class="cname" x="470" y="93">name</text><text class="ctype" x="666" y="93" text-anchor="end">varchar</text>
+          <text class="cname" x="470" y="115">email</text><text class="ctype" x="666" y="115" text-anchor="end">varchar · uniq</text>
+          <text class="cname" x="470" y="137">role</text><text class="ctype ctype-enum" x="666" y="137" text-anchor="end">enum · 3</text>
+          <text class="cname" x="470" y="159">department</text><text class="ctype ctype-enum" x="666" y="159" text-anchor="end">enum · 6</text>
+          <text class="cname" x="470" y="181">password</text><text class="ctype" x="666" y="181" text-anchor="end">varchar</text>
+          <text class="cname" x="470" y="203">otp_code</text><text class="ctype" x="666" y="203" text-anchor="end">varchar</text>
+          <text class="cname" x="470" y="225">otp_expires_at</text><text class="ctype" x="666" y="225" text-anchor="end">timestamp</text>
+          <text class="cname" x="470" y="247">email_verified_at</text><text class="ctype" x="666" y="247" text-anchor="end">timestamp</text>
+          <text class="cname" x="470" y="269">remember_token</text><text class="ctype" x="666" y="269" text-anchor="end">varchar</text>
+          <text class="cname" x="470" y="291">created / updated</text><text class="ctype" x="666" y="291" text-anchor="end">timestamps</text>
+        </g>
+
+        <!-- ================= TICKETS (centre) ================= -->
+        <g>
+          <rect class="box" x="410" y="380" width="300" height="356" rx="10" />
+          <rect class="fkrow" x="410" y="538" width="300" height="44" />
+          <path class="hdr-core" d="M410,390 a10,10 0 0 1 10,-10 h280 a10,10 0 0 1 10,10 v16 h-300 z" />
+          <line class="hdrline" x1="410" y1="406" x2="710" y2="406" />
+          <line class="rowline" x1="410" y1="428" x2="710" y2="428" /><line class="rowline" x1="410" y1="450" x2="710" y2="450" />
+          <line class="rowline" x1="410" y1="472" x2="710" y2="472" /><line class="rowline" x1="410" y1="494" x2="710" y2="494" />
+          <line class="rowline" x1="410" y1="516" x2="710" y2="516" /><line class="rowline" x1="410" y1="538" x2="710" y2="538" />
+          <line class="rowline" x1="410" y1="560" x2="710" y2="560" /><line class="rowline" x1="410" y1="582" x2="710" y2="582" />
+          <line class="rowline" x1="410" y1="604" x2="710" y2="604" /><line class="rowline" x1="410" y1="626" x2="710" y2="626" />
+          <line class="rowline" x1="410" y1="648" x2="710" y2="648" /><line class="rowline" x1="410" y1="670" x2="710" y2="670" />
+          <line class="rowline" x1="410" y1="692" x2="710" y2="692" /><line class="rowline" x1="410" y1="714" x2="710" y2="714" />
+          <rect class="boxln boxln-core" x="410" y="380" width="300" height="356" rx="10" />
+          <text class="ttitle ttitle-core" x="424" y="399">tickets</text>
+          <text class="ttag" x="696" y="398" text-anchor="end">THE WORK ITEM</text>
+          <text class="badge-pk" x="424" y="421">PK</text>
+          <text class="cname cname-pk" x="450" y="421">id</text><text class="ctype" x="696" y="421" text-anchor="end">bigint</text>
+          <text class="cname" x="450" y="443">title</text><text class="ctype" x="696" y="443" text-anchor="end">varchar</text>
+          <text class="cname" x="450" y="465">description</text><text class="ctype" x="696" y="465" text-anchor="end">text</text>
+          <text class="cname" x="450" y="487">category</text><text class="ctype ctype-enum" x="696" y="487" text-anchor="end">enum · 5</text>
+          <text class="cname" x="450" y="509">priority</text><text class="ctype ctype-enum" x="696" y="509" text-anchor="end">enum · 3</text>
+          <text class="cname" x="450" y="531">status</text><text class="ctype ctype-enum" x="696" y="531" text-anchor="end">enum · 7 · idx</text>
+          <text class="badge-fk" x="424" y="553">FK</text>
+          <text class="cname cname-fk" x="450" y="553">user_id</text><text class="ctype ctype-ref" x="696" y="553" text-anchor="end">→ users.id</text>
+          <text class="badge-fk" x="424" y="575">FK</text>
+          <text class="cname cname-fk" x="450" y="575">agent_id</text><text class="ctype ctype-ref" x="696" y="575" text-anchor="end">→ users.id</text>
+          <text class="cname" x="450" y="597">rating</text><text class="ctype" x="696" y="597" text-anchor="end">tinyint · null</text>
+          <text class="cname" x="450" y="619">rating_comment</text><text class="ctype" x="696" y="619" text-anchor="end">text · null</text>
+          <text class="cname" x="450" y="641">rated_at</text><text class="ctype" x="696" y="641" text-anchor="end">timestamp</text>
+          <text class="cname" x="450" y="663">resolved_at</text><text class="ctype" x="696" y="663" text-anchor="end">timestamp</text>
+          <text class="cname" x="450" y="685">source_email</text><text class="ctype" x="696" y="685" text-anchor="end">varchar · null</text>
+          <text class="cname" x="450" y="707">source_name</text><text class="ctype" x="696" y="707" text-anchor="end">varchar · null</text>
+          <text class="cname" x="450" y="729">created / updated</text><text class="ctype" x="696" y="729" text-anchor="end">timestamps</text>
+        </g>
+
+        <!-- ================= TICKET_AGENT (left upper) ================= -->
+        <g>
+          <rect class="box" x="40" y="60" width="240" height="70" rx="10" />
+          <rect class="fkrow" x="40" y="86" width="240" height="44" />
+          <path class="hdr" d="M40,70 a10,10 0 0 1 10,-10 h220 a10,10 0 0 1 10,10 v16 h-240 z" />
+          <line class="hdrline" x1="40" y1="86" x2="280" y2="86" />
+          <line class="rowline" x1="40" y1="108" x2="280" y2="108" />
+          <rect class="boxln" x="40" y="60" width="240" height="70" rx="10" />
+          <text class="ttitle" x="54" y="79">ticket_agent</text>
+          <text class="ttag" x="266" y="78" text-anchor="end">PIVOT · M:N</text>
+          <text class="badge-fk" x="54" y="101">PK</text>
+          <text class="cname cname-fk cname-pk" x="80" y="101">user_id</text><text class="ctype ctype-ref" x="266" y="101" text-anchor="end">→ users.id</text>
+          <text class="badge-fk" x="54" y="123">PK</text>
+          <text class="cname cname-fk cname-pk" x="80" y="123">ticket_id</text><text class="ctype ctype-ref" x="266" y="123" text-anchor="end">→ tickets.id</text>
+        </g>
+
+        <!-- ================= ATTACHMENTS (left lower) ================= -->
+        <g>
+          <rect class="box" x="40" y="430" width="240" height="136" rx="10" />
+          <rect class="fkrow" x="40" y="478" width="240" height="22" />
+          <path class="hdr" d="M40,440 a10,10 0 0 1 10,-10 h220 a10,10 0 0 1 10,10 v16 h-240 z" />
+          <line class="hdrline" x1="40" y1="456" x2="280" y2="456" />
+          <line class="rowline" x1="40" y1="478" x2="280" y2="478" /><line class="rowline" x1="40" y1="500" x2="280" y2="500" />
+          <line class="rowline" x1="40" y1="522" x2="280" y2="522" /><line class="rowline" x1="40" y1="544" x2="280" y2="544" />
+          <rect class="boxln" x="40" y="430" width="240" height="136" rx="10" />
+          <text class="ttitle" x="54" y="449">attachments</text>
+          <text class="ttag" x="266" y="448" text-anchor="end">FILES</text>
+          <text class="badge-pk" x="54" y="471">PK</text>
+          <text class="cname cname-pk" x="80" y="471">id</text><text class="ctype" x="266" y="471" text-anchor="end">bigint</text>
+          <text class="badge-fk" x="54" y="493">FK</text>
+          <text class="cname cname-fk" x="80" y="493">ticket_id</text><text class="ctype ctype-ref" x="266" y="493" text-anchor="end">→ tickets.id</text>
+          <text class="cname" x="80" y="515">file_path</text><text class="ctype" x="266" y="515" text-anchor="end">varchar</text>
+          <text class="cname" x="80" y="537">file_name</text><text class="ctype" x="266" y="537" text-anchor="end">varchar</text>
+          <text class="cname" x="80" y="559">created_at</text><text class="ctype" x="266" y="559" text-anchor="end">timestamp</text>
+        </g>
+
+        <!-- ================= COMMENTS (right) ================= -->
+        <g>
+          <rect class="box" x="800" y="380" width="250" height="158" rx="10" />
+          <rect class="fkrow" x="800" y="428" width="250" height="44" />
+          <path class="hdr" d="M800,390 a10,10 0 0 1 10,-10 h230 a10,10 0 0 1 10,10 v16 h-250 z" />
+          <line class="hdrline" x1="800" y1="406" x2="1050" y2="406" />
+          <line class="rowline" x1="800" y1="428" x2="1050" y2="428" /><line class="rowline" x1="800" y1="450" x2="1050" y2="450" />
+          <line class="rowline" x1="800" y1="472" x2="1050" y2="472" /><line class="rowline" x1="800" y1="494" x2="1050" y2="494" />
+          <line class="rowline" x1="800" y1="516" x2="1050" y2="516" />
+          <rect class="boxln" x="800" y="380" width="250" height="158" rx="10" />
+          <text class="ttitle" x="814" y="399">comments</text>
+          <text class="ttag" x="1036" y="398" text-anchor="end">CONVERSATION</text>
+          <text class="badge-pk" x="814" y="421">PK</text>
+          <text class="cname cname-pk" x="840" y="421">id</text><text class="ctype" x="1036" y="421" text-anchor="end">bigint</text>
+          <text class="badge-fk" x="814" y="443">FK</text>
+          <text class="cname cname-fk" x="840" y="443">user_id</text><text class="ctype ctype-ref" x="1036" y="443" text-anchor="end">→ users.id</text>
+          <text class="badge-fk" x="814" y="465">FK</text>
+          <text class="cname cname-fk" x="840" y="465">ticket_id</text><text class="ctype ctype-ref" x="1036" y="465" text-anchor="end">→ tickets.id</text>
+          <text class="cname" x="840" y="487">body</text><text class="ctype" x="1036" y="487" text-anchor="end">text</text>
+          <text class="cname" x="840" y="509">visibility</text><text class="ctype" x="1036" y="509" text-anchor="end">varchar · 20</text>
+          <text class="cname" x="840" y="531">created / updated</text><text class="ctype" x="1036" y="531" text-anchor="end">timestamps</text>
+        </g>
+
+      </svg>
+    </div>
+    <figcaption>Compact layout for a single screenshot: each foreign key is drawn in its own color, so every arrow can still be traced from its dot to the primary key it targets. Framework tables (sessions, jobs, cache, migrations) are omitted — they hold no relationship to the domain.</figcaption>
+  </figure>
+
+  <footer>
+    <span>NCT Help Desk — Laravel 12 · MySQL / InnoDB</span>
+    <span>5 domain tables · 7 foreign keys</span>
+  </footer>
+</div>

@@ -1,0 +1,117 @@
+<style>
+  :root{
+    --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75;
+    --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --gold:#b4894a; --slate:#5a6670; --blue:#3a5f7d;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);
+    --mono:ui-monospace,"Cascadia Code","Consolas",monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+      --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+      --green:#54ba8f; --green-deep:#6cc79f; --gold:#cba869; --slate:#93a0ab; --blue:#7ea6c4;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+  }
+  :root[data-theme="light"]{ --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75; --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --gold:#b4894a; --slate:#5a6670; --blue:#3a5f7d;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);}
+  :root[data-theme="dark"]{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+    --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+    --green:#54ba8f; --green-deep:#6cc79f; --gold:#cba869; --slate:#93a0ab; --blue:#7ea6c4;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .page{max-width:920px;margin:0 auto;padding:44px 24px 60px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin:0 0 10px;}
+  h1{font-size:clamp(24px,3.6vw,32px);line-height:1.12;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance;font-weight:700;}
+  .sub{max-width:60ch;color:var(--ink-soft);font-size:15px;margin:0;}
+  .rule{height:3px;width:56px;margin-top:20px;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:2px;}
+
+  .frame{margin-top:34px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:20px;overflow-x:auto;}
+  svg{display:block;width:100%;min-width:560px;height:auto;}
+  .caption{margin-top:22px;font-size:12.5px;color:var(--ink-mute);font-style:italic;text-align:center;}
+
+  .box{fill:var(--surface);stroke-width:1.8;}
+  .b-slate{stroke:var(--slate);} .b-green{stroke:var(--green);} .b-deep{stroke:var(--green-deep);} .b-gold{stroke:var(--gold);} .b-blue{stroke:var(--blue);}
+  .t-title{fill:var(--ink);font-family:var(--sans);font-weight:680;font-size:16px;}
+  .t-sub{fill:var(--ink-mute);font-family:var(--sans);font-size:11px;}
+  .t-lbl{fill:var(--ink-mute);font-family:var(--mono);font-size:11px;}
+  .ln{fill:none;stroke:var(--line-strong);stroke-width:2;}
+  .ln.dash{stroke-dasharray:5 4;}
+  .mk{fill:var(--line-strong);}
+</style>
+
+<div class="page">
+  <p class="eyebrow">System Design &middot; Block Diagram</p>
+  <h1>IT Help Desk Ticket System — High-Level Block Diagram</h1>
+  <p class="sub">The system's main building blocks and how they connect. Users interact
+    through the interface; the application logic processes every request and reads or writes
+    the data stores; an email service links the system to Gmail for intake and notifications.</p>
+  <div class="rule"></div>
+
+  <div class="frame">
+    <svg viewBox="0 0 880 640" role="img" aria-label="High-level block diagram">
+      <defs>
+        <marker id="a" markerWidth="9" markerHeight="9" refX="7.5" refY="3" orient="auto"><path d="M0,0 L7.5,3 L0,6 Z" class="mk"/></marker>
+      </defs>
+
+      <!-- main spine -->
+      <rect class="box b-slate" x="290" y="34"  width="250" height="70" rx="12"/>
+      <text class="t-title" x="415" y="66" text-anchor="middle">Users</text>
+      <text class="t-sub"   x="415" y="86" text-anchor="middle">Employee &middot; IT Specialist &middot; Administrator</text>
+
+      <rect class="box b-green" x="290" y="178" width="250" height="70" rx="12"/>
+      <text class="t-title" x="415" y="210" text-anchor="middle">User Interface</text>
+      <text class="t-sub"   x="415" y="230" text-anchor="middle">Blade pages (web browser)</text>
+
+      <rect class="box b-deep" x="290" y="322" width="250" height="70" rx="12"/>
+      <text class="t-title" x="415" y="354" text-anchor="middle">Application Logic</text>
+      <text class="t-sub"   x="415" y="374" text-anchor="middle">Laravel — controllers, rules, models</text>
+
+      <rect class="box b-gold" x="200" y="512" width="200" height="70" rx="12"/>
+      <text class="t-title" x="300" y="544" text-anchor="middle">Database</text>
+      <text class="t-sub"   x="300" y="564" text-anchor="middle">MySQL</text>
+
+      <rect class="box b-gold" x="430" y="512" width="200" height="70" rx="12"/>
+      <text class="t-title" x="530" y="544" text-anchor="middle">File Storage</text>
+      <text class="t-sub"   x="530" y="564" text-anchor="middle">attachments</text>
+
+      <!-- email branch -->
+      <rect class="box b-gold" x="620" y="322" width="210" height="70" rx="12"/>
+      <text class="t-title" x="725" y="354" text-anchor="middle">Email Service</text>
+      <text class="t-sub"   x="725" y="374" text-anchor="middle">inbox listener + mailer</text>
+
+      <rect class="box b-blue" x="620" y="178" width="210" height="70" rx="12"/>
+      <text class="t-title" x="725" y="210" text-anchor="middle">Gmail</text>
+      <text class="t-sub"   x="725" y="230" text-anchor="middle">SMTP / IMAP (external)</text>
+
+      <!-- arrows -->
+      <path class="ln" marker-end="url(#a)" d="M400,104 L400,176"/>
+      <text class="t-lbl" x="360" y="145" text-anchor="end">requests</text>
+      <path class="ln dash" marker-end="url(#a)" d="M432,176 L432,106"/>
+      <text class="t-lbl" x="470" y="145" text-anchor="start">responses</text>
+
+      <path class="ln" marker-end="url(#a)" d="M415,248 L415,320"/>
+
+      <path class="ln" marker-end="url(#a)" d="M370,392 C330,440 310,470 305,510"/>
+      <text class="t-lbl" x="285" y="460" text-anchor="end">read / write</text>
+      <path class="ln" marker-end="url(#a)" d="M460,392 C500,440 520,470 525,510"/>
+      <text class="t-lbl" x="548" y="460" text-anchor="start">save files</text>
+
+      <!-- app <-> email service (bidirectional) -->
+      <path class="ln" marker-start="url(#a)" marker-end="url(#a)" d="M542,357 L618,357"/>
+      <text class="t-lbl" x="580" y="345" text-anchor="middle">tickets in /</text>
+      <text class="t-lbl" x="580" y="404" text-anchor="middle">mail out</text>
+
+      <!-- email service <-> gmail -->
+      <path class="ln" marker-start="url(#a)" marker-end="url(#a)" d="M725,320 L725,250"/>
+      <text class="t-lbl" x="748" y="288" text-anchor="start">IMAP / SMTP</text>
+    </svg>
+  </div>
+
+  <p class="caption">Figure 5.1 — High-level block diagram of the IT Help Desk Ticket System.</p>
+</div>

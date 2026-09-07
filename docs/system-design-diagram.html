@@ -1,0 +1,384 @@
+<style>
+  :root {
+    --bg: #eef2ef;
+    --surface: #ffffff;
+    --surface-2: #f6f8f6;
+    --ink: #16241f;
+    --ink-soft: #46554e;
+    --ink-mute: #6b7a72;
+    --line: #d3ddd6;
+    --line-strong: #b7c5bc;
+    --green: #0f7a57;
+    --green-deep: #0a5f43;
+    --green-tint: #e4f1eb;
+    --gold: #b4894a;
+    --gold-tint: #f4ecdd;
+    --blue: #3a5f7d;
+    --blue-tint: #e5edf3;
+    --slate: #55606b;
+    --slate-tint: #eceef1;
+    --shadow: 0 1px 2px rgba(16,40,30,.05), 0 6px 18px rgba(16,40,30,.06);
+    --mono: ui-monospace, "SFMono-Regular", "Cascadia Code", "Consolas", monospace;
+    --sans: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #10161a;
+      --surface: #1a232a;
+      --surface-2: #212c34;
+      --ink: #e7edea;
+      --ink-soft: #b3c0ba;
+      --ink-mute: #8b988f;
+      --line: #2e3a42;
+      --line-strong: #3d4a53;
+      --green: #4fb48a;
+      --green-deep: #6cc79f;
+      --green-tint: #17322a;
+      --gold: #cba869;
+      --gold-tint: #322a1c;
+      --blue: #7ea6c4;
+      --blue-tint: #1c2c38;
+      --slate: #9aa7b2;
+      --slate-tint: #242d34;
+      --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="light"] {
+    --bg: #eef2ef; --surface: #ffffff; --surface-2: #f6f8f6;
+    --ink: #16241f; --ink-soft: #46554e; --ink-mute: #6b7a72;
+    --line: #d3ddd6; --line-strong: #b7c5bc;
+    --green: #0f7a57; --green-deep: #0a5f43; --green-tint: #e4f1eb;
+    --gold: #b4894a; --gold-tint: #f4ecdd; --blue: #3a5f7d; --blue-tint: #e5edf3;
+    --slate: #55606b; --slate-tint: #eceef1;
+    --shadow: 0 1px 2px rgba(16,40,30,.05), 0 6px 18px rgba(16,40,30,.06);
+  }
+  :root[data-theme="dark"] {
+    --bg: #10161a; --surface: #1a232a; --surface-2: #212c34;
+    --ink: #e7edea; --ink-soft: #b3c0ba; --ink-mute: #8b988f;
+    --line: #2e3a42; --line-strong: #3d4a53;
+    --green: #4fb48a; --green-deep: #6cc79f; --green-tint: #17322a;
+    --gold: #cba869; --gold-tint: #322a1c; --blue: #7ea6c4; --blue-tint: #1c2c38;
+    --slate: #9aa7b2; --slate-tint: #242d34;
+    --shadow: 0 1px 2px rgba(0,0,0,.3), 0 8px 22px rgba(0,0,0,.35);
+  }
+
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  .page {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 48px 28px 64px;
+  }
+
+  /* ---- Masthead ---- */
+  .masthead { margin-bottom: 40px; }
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+    color: var(--green);
+    font-weight: 600;
+    margin: 0 0 10px;
+  }
+  h1 {
+    font-size: clamp(26px, 4vw, 38px);
+    line-height: 1.1;
+    letter-spacing: -.02em;
+    margin: 0 0 12px;
+    text-wrap: balance;
+    font-weight: 700;
+  }
+  .sub {
+    max-width: 60ch;
+    color: var(--ink-soft);
+    font-size: 15.5px;
+    margin: 0;
+  }
+  .rule {
+    height: 3px; width: 56px; margin-top: 22px;
+    background: linear-gradient(90deg, var(--green), var(--gold));
+    border-radius: 2px;
+  }
+
+  /* ---- Diagram frame ---- */
+  .diagram {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    box-shadow: var(--shadow);
+    padding: 8px 26px 26px;
+    overflow-x: auto;
+  }
+
+  /* ---- Band (a layer) ---- */
+  .band {
+    display: grid;
+    grid-template-columns: 168px 1fr;
+    gap: 22px;
+    align-items: center;
+    padding: 22px 0;
+    min-width: 620px;
+  }
+  .band-label { text-align: right; padding-right: 6px; }
+  .band-num {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--gold);
+    font-weight: 600;
+    letter-spacing: .05em;
+  }
+  .band-name {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 3px 0 4px;
+    letter-spacing: -.01em;
+  }
+  .band-note {
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    line-height: 1.35;
+  }
+  .band-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+
+  /* ---- Component card ---- */
+  .card {
+    flex: 1 1 auto;
+    min-width: 150px;
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-top: 3px solid var(--edge, var(--green));
+    border-radius: 10px;
+    padding: 13px 15px;
+  }
+  .card h3 {
+    margin: 0 0 4px;
+    font-size: 14.5px;
+    font-weight: 650;
+    letter-spacing: -.01em;
+    color: var(--ink);
+  }
+  .card p {
+    margin: 0;
+    font-size: 12px;
+    color: var(--ink-mute);
+    line-height: 1.4;
+  }
+  .card .tech {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--edge, var(--green));
+    display: block;
+    margin-top: 6px;
+    letter-spacing: .01em;
+  }
+
+  /* edge colors per layer group */
+  .e-slate { --edge: var(--slate); }
+  .e-green { --edge: var(--green); }
+  .e-deep  { --edge: var(--green-deep); }
+  .e-gold  { --edge: var(--gold); }
+  .e-blue  { --edge: var(--blue); }
+
+  /* ---- Connector between bands ---- */
+  .connector {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    height: 30px;
+    color: var(--ink-mute);
+  }
+  .connector .spine {
+    width: 2px; height: 100%;
+    background: repeating-linear-gradient(var(--line-strong) 0 6px, transparent 6px 11px);
+  }
+  .connector .arrow {
+    position: relative;
+    width: 2px; height: 100%;
+    background: var(--line-strong);
+  }
+  .connector .arrow::after {
+    content: "";
+    position: absolute;
+    bottom: -1px; left: 50%;
+    transform: translateX(-50%);
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--line-strong);
+  }
+  .connector .flow-tag {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    letter-spacing: .04em;
+    color: var(--ink-mute);
+    background: var(--surface-2);
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 3px 10px;
+    white-space: nowrap;
+  }
+
+  /* ---- Legend / flows ---- */
+  .flows {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 34px;
+  }
+  .flow {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-left: 4px solid var(--fc, var(--green));
+    border-radius: 12px;
+    padding: 16px 18px;
+    box-shadow: var(--shadow);
+  }
+  .flow h4 {
+    margin: 0 0 8px;
+    font-size: 13px;
+    letter-spacing: -.01em;
+  }
+  .flow .path {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    line-height: 1.7;
+  }
+  .flow .path b { color: var(--fc, var(--green)); font-weight: 600; }
+  .f-web { --fc: var(--green); }
+  .f-mail { --fc: var(--gold); }
+
+  .caption {
+    margin-top: 26px;
+    font-size: 12.5px;
+    color: var(--ink-mute);
+    font-style: italic;
+    text-align: center;
+  }
+
+  @media (max-width: 640px) {
+    .band { grid-template-columns: 1fr; gap: 10px; min-width: 0; }
+    .band-label { text-align: left; }
+    .diagram { padding: 8px 14px 18px; }
+  }
+</style>
+
+<div class="page">
+  <header class="masthead">
+    <p class="eyebrow">System Design &middot; Block Diagram</p>
+    <h1>IT Help Desk Ticket System — Architecture Overview</h1>
+    <p class="sub">A high-level, layered view of the system's building blocks and how a
+      request travels from the user through the Laravel application to the database and
+      back. Each layer is drawn as a band; arrows show the direction of the main data flow.</p>
+    <div class="rule"></div>
+  </header>
+
+  <section class="diagram" aria-label="System block diagram">
+
+    <!-- Band 1: Actors -->
+    <div class="band">
+      <div class="band-label">
+        <div class="band-num">LAYER 1</div>
+        <div class="band-name">Actors</div>
+        <div class="band-note">Who uses the system</div>
+      </div>
+      <div class="band-cards">
+        <div class="card e-slate"><h3>Employee</h3><p>Submits tickets, tracks status, rates the technician</p></div>
+        <div class="card e-slate"><h3>IT Specialist</h3><p>Picks from the shared queue, self-assigns, resolves</p></div>
+        <div class="card e-slate"><h3>Administrator</h3><p>Oversight: dashboards, reports, user management</p></div>
+        <div class="card e-slate"><h3>Email Sender</h3><p>External user whose email becomes a ticket</p></div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow"></span><span class="flow-tag">HTTP request</span><span class="arrow"></span></div>
+
+    <!-- Band 2: Entry -->
+    <div class="band">
+      <div class="band-label">
+        <div class="band-num">LAYER 2</div>
+        <div class="band-name">Entry &amp; Access</div>
+        <div class="band-note">Request routing and security</div>
+      </div>
+      <div class="band-cards">
+        <div class="card e-green"><h3>Routing</h3><p>Maps each URL to the right controller action<span class="tech">routes/web.php</span></p></div>
+        <div class="card e-green"><h3>Middleware</h3><p>Enforces sign-in, role access, and language<span class="tech">auth &middot; role &middot; locale</span></p></div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow"></span><span class="flow-tag">dispatch</span><span class="arrow"></span></div>
+
+    <!-- Band 3: Application (MVC) -->
+    <div class="band">
+      <div class="band-label">
+        <div class="band-num">LAYER 3</div>
+        <div class="band-name">Application (MVC)</div>
+        <div class="band-note">Business logic &amp; page rendering</div>
+      </div>
+      <div class="band-cards">
+        <div class="card e-deep"><h3>Controllers</h3><p>Submit, assign, resolve, dashboards, login<span class="tech">app/Http/Controllers</span></p></div>
+        <div class="card e-deep"><h3>Policies</h3><p>Per-ticket access &amp; accountability rules<span class="tech">app/Policies</span></p></div>
+        <div class="card e-deep"><h3>Models</h3><p>User &middot; Ticket &middot; Attachment &middot; Comment<span class="tech">app/Models</span></p></div>
+        <div class="card e-deep"><h3>Views (Blade)</h3><p>Renders the HTML pages the user sees<span class="tech">resources/views</span></p></div>
+        <div class="card e-deep"><h3>Email Service</h3><p>Scheduled listener imports inbox as tickets<span class="tech">EmailTicketIngester</span></p></div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow"></span><span class="flow-tag">read / write</span><span class="arrow"></span></div>
+
+    <!-- Band 4: Storage -->
+    <div class="band">
+      <div class="band-label">
+        <div class="band-num">LAYER 4</div>
+        <div class="band-name">Storage</div>
+        <div class="band-note">Where data lives</div>
+      </div>
+      <div class="band-cards">
+        <div class="card e-gold"><h3>MySQL Database</h3><p>Users, tickets, ratings, comments — all structured data<span class="tech">Eloquent ORM</span></p></div>
+        <div class="card e-gold"><h3>File Storage</h3><p>Uploaded attachments, referenced by path from the DB<span class="tech">storage/ (local disk)</span></p></div>
+      </div>
+    </div>
+
+    <div class="connector"><span class="arrow"></span><span class="flow-tag">SMTP / IMAP</span><span class="arrow"></span></div>
+
+    <!-- Band 5: External -->
+    <div class="band">
+      <div class="band-label">
+        <div class="band-num">LAYER 5</div>
+        <div class="band-name">External Services</div>
+        <div class="band-note">Outside the application</div>
+      </div>
+      <div class="band-cards">
+        <div class="card e-blue"><h3>Gmail (SMTP / IMAP)</h3><p>Receives email-tickets; sends OTP codes, acknowledgements &amp; admin notifications<span class="tech">webklex/laravel-imap</span></p></div>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Representative flows -->
+  <section class="flows" aria-label="Representative data flows">
+    <div class="flow f-web">
+      <h4>How a ticket is submitted (web)</h4>
+      <p class="path"><b>Employee</b> &rarr; Routing / Middleware &rarr; Controller &rarr; <b>Policy check</b> &rarr; Model &rarr; <b>Database</b>, then Model &rarr; Controller &rarr; View &rarr; back to the browser.</p>
+    </div>
+    <div class="flow f-mail">
+      <h4>How a ticket arrives by email</h4>
+      <p class="path"><b>Email Sender</b> &rarr; Gmail (IMAP) &rarr; <b>Email Service</b> &rarr; Model &rarr; <b>Database</b>, then an acknowledgement is sent back via SMTP.</p>
+    </div>
+  </section>
+
+  <p class="caption">Figure 5.1 — Layered block diagram of the IT Help Desk Ticket System.
+    Arrows indicate the primary direction of data flow between layers.</p>
+</div>

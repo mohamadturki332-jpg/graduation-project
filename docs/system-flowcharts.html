@@ -1,0 +1,422 @@
+<title>IT Help Desk — Flowcharts & State Diagram</title>
+<style>
+  :root{
+    --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75;
+    --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --green-tint:#e7f2ec;
+    --gold:#b4894a; --gold-tint:#f6efe2; --slate:#5a6670; --blue:#3a5f7d; --rose:#a4453a;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);
+    --mono:ui-monospace,"Cascadia Code","Consolas",monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+      --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+      --green:#54ba8f; --green-deep:#6cc79f; --green-tint:#1d2f2a;
+      --gold:#cba869; --gold-tint:#2c2717; --slate:#93a0ab; --blue:#7ea6c4; --rose:#d0776c;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+  }
+  :root[data-theme="light"]{ --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75; --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --green-tint:#e7f2ec; --gold:#b4894a; --gold-tint:#f6efe2;
+    --slate:#5a6670; --blue:#3a5f7d; --rose:#a4453a;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);}
+  :root[data-theme="dark"]{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+    --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+    --green:#54ba8f; --green-deep:#6cc79f; --green-tint:#1d2f2a; --gold:#cba869; --gold-tint:#2c2717;
+    --slate:#93a0ab; --blue:#7ea6c4; --rose:#d0776c;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .page{max-width:960px;margin:0 auto;padding:44px 24px 64px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin:0 0 10px;}
+  h1{font-size:clamp(24px,3.6vw,32px);line-height:1.12;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance;font-weight:700;}
+  .sub{max-width:64ch;color:var(--ink-soft);font-size:15px;margin:0;}
+  .rule{height:3px;width:56px;margin-top:20px;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:2px;}
+
+  h2{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:52px 0 6px;}
+  .lead{max-width:66ch;color:var(--ink-soft);font-size:14.5px;margin:0 0 4px;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:18px 26px;margin-top:26px;padding:16px 18px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;}
+  .legend div{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);}
+  .swatch{width:26px;height:18px;flex:0 0 auto;border:1.8px solid var(--line-strong);}
+  .sw-term{border-radius:9px;border-color:var(--slate);}
+  .sw-proc{border-radius:5px;border-color:var(--green);}
+  .sw-dec{border-radius:3px;transform:rotate(45deg);width:16px;height:16px;border-color:var(--gold);}
+  .sw-mail{border-radius:5px;border-color:var(--gold);background:var(--gold-tint);}
+
+  .frame{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:18px;overflow-x:auto;}
+  svg{display:block;width:100%;min-width:600px;height:auto;}
+  .caption{margin-top:16px;font-size:12.5px;color:var(--ink-mute);font-style:italic;text-align:center;}
+
+  .box{fill:var(--surface);stroke-width:1.8;}
+  .n-proc{stroke:var(--green);}
+  .n-create{fill:var(--green-tint);stroke:var(--green-deep);stroke-width:2.2;}
+  .n-mail{fill:var(--gold-tint);stroke:var(--gold);}
+  .n-dec{fill:var(--surface);stroke:var(--gold);stroke-width:1.8;}
+  .n-term{fill:var(--surface-2);stroke:var(--slate);stroke-width:1.8;}
+  .n-stop{fill:var(--surface-2);stroke:var(--rose);stroke-width:1.8;stroke-dasharray:5 4;}
+
+  .t-node{fill:var(--ink);font-family:var(--sans);font-weight:600;font-size:13.5px;}
+  .t-node.sm{font-size:12.5px;}
+  .t-sub{fill:var(--ink-mute);font-family:var(--sans);font-size:11px;}
+  .t-lbl{fill:var(--ink-mute);font-family:var(--mono);font-size:11px;font-weight:600;}
+  .ln{fill:none;stroke:var(--line-strong);stroke-width:2;}
+  .mk{fill:var(--line-strong);}
+</style>
+
+<div class="page">
+  <p class="eyebrow">System Design &middot; Flowcharts</p>
+  <h1>IT Help Desk Ticket System — Flowcharts &amp; Ticket State Machine</h1>
+  <p class="sub">The core flows of the system: how a request becomes a resolved ticket
+    (through either the web form or email), and how a user is authenticated with the
+    two-factor sign-in. Each flowchart shape marks a kind of step; each diamond is a decision.
+    The final figure is a <strong>state diagram</strong> — it shows the seven statuses a
+    ticket can hold and which moves between them are allowed.</p>
+  <div class="rule"></div>
+
+  <div class="legend" role="list" aria-label="Flowchart shape key">
+    <div role="listitem"><span class="swatch sw-term"></span>Start / end point</div>
+    <div role="listitem"><span class="swatch sw-proc"></span>Process step (an action)</div>
+    <div role="listitem"><span class="swatch sw-dec"></span>Decision (yes / no)</div>
+    <div role="listitem"><span class="swatch sw-mail"></span>Email-intake step</div>
+  </div>
+
+  <!-- ============================================================= -->
+  <!-- FLOWCHART 1 — TICKET LIFECYCLE                                -->
+  <!-- ============================================================= -->
+  <h2>1 &nbsp;Ticket lifecycle</h2>
+  <p class="lead">From the moment a user needs help to a closed, rated ticket. A request
+    enters through one of two channels, both of which converge on a single created ticket
+    that a technician then works to resolution.</p>
+
+  <div class="frame">
+    <svg viewBox="0 0 880 1500" role="img" aria-label="Ticket lifecycle flowchart">
+      <defs>
+        <marker id="a1" markerWidth="9" markerHeight="9" refX="7.2" refY="3" orient="auto"><path d="M0,0 L7.2,3 L0,6 Z" class="mk"/></marker>
+      </defs>
+
+      <!-- START -->
+      <rect class="box n-term" x="320" y="30" width="240" height="54" rx="27"/>
+      <text class="t-node" x="440" y="62" text-anchor="middle">A user needs IT help</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,84 L440,102"/>
+
+      <!-- D1 how submitted -->
+      <polygon class="n-dec" points="440,104 534,152 440,200 346,152"/>
+      <text class="t-node sm" x="440" y="149" text-anchor="middle">How is the</text>
+      <text class="t-node sm" x="440" y="164" text-anchor="middle">request sent?</text>
+
+      <!-- D1 -> web lane -->
+      <path class="ln" marker-end="url(#a1)" d="M346,152 L210,152 L210,238"/>
+      <text class="t-lbl" x="276" y="143" text-anchor="middle">Web form</text>
+      <!-- D1 -> email lane -->
+      <path class="ln" marker-end="url(#a1)" d="M534,152 L660,152 L660,238"/>
+      <text class="t-lbl" x="600" y="143" text-anchor="middle">Email</text>
+
+      <!-- WEB lane -->
+      <rect class="box n-proc" x="100" y="240" width="220" height="62" rx="8"/>
+      <text class="t-node sm" x="210" y="266" text-anchor="middle">Employee signs in and</text>
+      <text class="t-node sm" x="210" y="284" text-anchor="middle">submits the web form</text>
+
+      <!-- EMAIL lane -->
+      <rect class="box n-mail" x="485" y="240" width="210" height="56" rx="8"/>
+      <text class="t-node sm" x="590" y="266" text-anchor="middle">User emails the</text>
+      <text class="t-node sm" x="590" y="284" text-anchor="middle">help-desk inbox</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M590,296 L590,318"/>
+      <rect class="box n-mail" x="485" y="320" width="210" height="56" rx="8"/>
+      <text class="t-node sm" x="590" y="346" text-anchor="middle">Listener fetches new</text>
+      <text class="t-node sm" x="590" y="364" text-anchor="middle">mail (every 5 seconds)</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M590,376 L590,410"/>
+
+      <!-- E3 automated sender? -->
+      <polygon class="n-dec" points="590,412 686,462 590,512 494,462"/>
+      <text class="t-node sm" x="590" y="459" text-anchor="middle">Automated or</text>
+      <text class="t-node sm" x="590" y="474" text-anchor="middle">bounce sender?</text>
+
+      <!-- Yes -> ignore -->
+      <path class="ln" marker-end="url(#a1)" d="M686,462 L730,462"/>
+      <text class="t-lbl" x="708" y="452" text-anchor="middle">Yes</text>
+      <rect class="box n-stop" x="730" y="435" width="140" height="54" rx="10"/>
+      <text class="t-node sm" x="800" y="460" text-anchor="middle">Ignored —</text>
+      <text class="t-node sm" x="800" y="477" text-anchor="middle">marked read</text>
+
+      <!-- No -> detect + ack -->
+      <path class="ln" marker-end="url(#a1)" d="M590,512 L590,540"/>
+      <text class="t-lbl" x="612" y="530" text-anchor="start">No</text>
+      <rect class="box n-mail" x="475" y="542" width="230" height="66" rx="8"/>
+      <text class="t-node sm" x="590" y="569" text-anchor="middle">Detect priority &amp; category,</text>
+      <text class="t-node sm" x="590" y="587" text-anchor="middle">send acknowledgement reply</text>
+
+      <!-- MERGE -> CREATE -->
+      <rect class="box n-create" x="298" y="700" width="284" height="66" rx="9"/>
+      <text class="t-node" x="440" y="727" text-anchor="middle">Ticket created</text>
+      <text class="t-sub" x="440" y="748" text-anchor="middle">status = Open &middot; no technician yet</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M210,302 C210,540 300,650 380,700"/>
+      <path class="ln" marker-end="url(#a1)" d="M590,608 C590,655 540,682 500,700"/>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,766 L440,800"/>
+
+      <!-- P2 queue -->
+      <rect class="box n-proc" x="310" y="802" width="260" height="56" rx="8"/>
+      <text class="t-node sm" x="440" y="835" text-anchor="middle">Technician opens the shared queue</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,858 L440,886"/>
+
+      <!-- D2 claimed? -->
+      <polygon class="n-dec" points="440,888 536,936 440,984 344,936"/>
+      <text class="t-node sm" x="440" y="933" text-anchor="middle">Claimed by a</text>
+      <text class="t-node sm" x="440" y="948" text-anchor="middle">technician?</text>
+
+      <!-- No loop back to queue -->
+      <path class="ln" marker-end="url(#a1)" d="M344,936 L250,936 L250,830 L310,830"/>
+      <text class="t-lbl" x="286" y="926" text-anchor="middle">No</text>
+
+      <!-- Yes down -->
+      <path class="ln" marker-end="url(#a1)" d="M440,984 L440,1014"/>
+      <text class="t-lbl" x="462" y="1004" text-anchor="start">Yes</text>
+
+      <!-- P3 in progress -->
+      <rect class="box n-proc" x="296" y="1016" width="288" height="66" rx="8"/>
+      <text class="t-node sm" x="440" y="1043" text-anchor="middle">Status &rarr; In progress</text>
+      <text class="t-sub" x="440" y="1064" text-anchor="middle">technician works and replies to the requester</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,1082 L440,1112"/>
+
+      <!-- D3 resolved? -->
+      <polygon class="n-dec" points="440,1114 524,1158 440,1202 356,1158"/>
+      <text class="t-node sm" x="440" y="1163" text-anchor="middle">Resolved?</text>
+
+      <!-- No loop back up -->
+      <path class="ln" marker-end="url(#a1)" d="M356,1158 L266,1158 L266,1049 L296,1049"/>
+      <text class="t-lbl" x="300" y="1148" text-anchor="middle">No</text>
+
+      <!-- Yes down -->
+      <path class="ln" marker-end="url(#a1)" d="M440,1202 L440,1232"/>
+      <text class="t-lbl" x="462" y="1222" text-anchor="start">Yes</text>
+
+      <!-- P4 resolved -->
+      <rect class="box n-proc" x="298" y="1234" width="284" height="62" rx="8"/>
+      <text class="t-node sm" x="440" y="1260" text-anchor="middle">Status &rarr; Resolved / Closed</text>
+      <text class="t-sub" x="440" y="1281" text-anchor="middle">resolution time recorded</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,1296 L440,1324"/>
+
+      <!-- P5 rate -->
+      <rect class="box n-proc" x="310" y="1326" width="260" height="54" rx="8"/>
+      <text class="t-node sm" x="440" y="1358" text-anchor="middle">Employee rates the technician (optional)</text>
+
+      <path class="ln" marker-end="url(#a1)" d="M440,1380 L440,1408"/>
+
+      <!-- END -->
+      <rect class="box n-term" x="330" y="1410" width="220" height="52" rx="26"/>
+      <text class="t-node" x="440" y="1441" text-anchor="middle">Ticket closed</text>
+    </svg>
+  </div>
+  <p class="caption">Figure 5.2 — Ticket lifecycle: two intake channels converge on one created ticket, which a technician drives to resolution.</p>
+
+  <!-- ============================================================= -->
+  <!-- FLOWCHART 2 — LOGIN / 2FA                                     -->
+  <!-- ============================================================= -->
+  <h2>2 &nbsp;Login &amp; two-factor authentication</h2>
+  <p class="lead">Every sign-in passes three gates — a brute-force limit, the password check,
+    and (for real email accounts) a one-time code sent by email — before the user is routed to
+    the dashboard for their role.</p>
+
+  <div class="frame">
+    <svg viewBox="0 0 760 1180" role="img" aria-label="Login and two-factor authentication flowchart">
+      <defs>
+        <marker id="a2" markerWidth="9" markerHeight="9" refX="7.2" refY="3" orient="auto"><path d="M0,0 L7.2,3 L0,6 Z" class="mk"/></marker>
+      </defs>
+
+      <!-- START -->
+      <rect class="box n-term" x="240" y="24" width="280" height="52" rx="26"/>
+      <text class="t-node sm" x="380" y="55" text-anchor="middle">User submits email + password</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,76 L380,100"/>
+
+      <!-- D1 too many attempts -->
+      <polygon class="n-dec" points="380,102 486,152 380,202 274,152"/>
+      <text class="t-node sm" x="380" y="149" text-anchor="middle">Too many recent</text>
+      <text class="t-node sm" x="380" y="164" text-anchor="middle">attempts?</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M486,152 L560,152"/>
+      <text class="t-lbl" x="524" y="142" text-anchor="middle">Yes</text>
+      <rect class="box n-stop" x="560" y="126" width="180" height="52" rx="10"/>
+      <text class="t-node sm" x="650" y="151" text-anchor="middle">Blocked 60s —</text>
+      <text class="t-node sm" x="650" y="168" text-anchor="middle">show error</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,202 L380,232"/>
+      <text class="t-lbl" x="402" y="222" text-anchor="start">No</text>
+
+      <!-- D2 credentials -->
+      <polygon class="n-dec" points="380,234 486,286 380,338 274,286"/>
+      <text class="t-node sm" x="380" y="283" text-anchor="middle">Password</text>
+      <text class="t-node sm" x="380" y="298" text-anchor="middle">correct?</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M486,286 L560,286"/>
+      <text class="t-lbl" x="524" y="276" text-anchor="middle">No</text>
+      <rect class="box n-stop" x="560" y="258" width="180" height="56" rx="10"/>
+      <text class="t-node sm" x="650" y="283" text-anchor="middle">Count the attempt,</text>
+      <text class="t-node sm" x="650" y="301" text-anchor="middle">show &ldquo;invalid&rdquo;</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,338 L380,368"/>
+      <text class="t-lbl" x="402" y="358" text-anchor="start">Yes</text>
+
+      <!-- D3 demo account -->
+      <polygon class="n-dec" points="380,370 486,422 380,474 274,422"/>
+      <text class="t-node sm" x="380" y="419" text-anchor="middle">Demo account</text>
+      <text class="t-node sm" x="380" y="434" text-anchor="middle">(@nctkap.com)?</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M486,422 L560,422"/>
+      <text class="t-lbl" x="524" y="412" text-anchor="middle">Yes</text>
+      <rect class="box n-proc" x="560" y="396" width="180" height="52" rx="8"/>
+      <text class="t-node sm" x="650" y="427" text-anchor="middle">Sign in directly</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,474 L380,504"/>
+      <text class="t-lbl" x="402" y="494" text-anchor="start">No</text>
+
+      <!-- P1 send code -->
+      <rect class="box n-proc" x="250" y="506" width="260" height="60" rx="8"/>
+      <text class="t-node sm" x="380" y="532" text-anchor="middle">Generate a 6-digit code,</text>
+      <text class="t-node sm" x="380" y="550" text-anchor="middle">email it, store it hashed</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,566 L380,594"/>
+
+      <!-- P2 enter code -->
+      <rect class="box n-proc" x="270" y="596" width="220" height="52" rx="8"/>
+      <text class="t-node sm" x="380" y="627" text-anchor="middle">User enters the code</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,648 L380,678"/>
+
+      <!-- D4 code valid -->
+      <polygon class="n-dec" points="380,680 490,734 380,788 270,734"/>
+      <text class="t-node sm" x="380" y="731" text-anchor="middle">Code correct</text>
+      <text class="t-node sm" x="380" y="746" text-anchor="middle">&amp; not expired?</text>
+
+      <!-- No -> error/resend (left) -->
+      <path class="ln" marker-end="url(#a2)" d="M270,734 L150,734 L150,622 L270,622"/>
+      <text class="t-lbl" x="150" y="724" text-anchor="middle">No — retry / resend</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,788 L380,900"/>
+      <text class="t-lbl" x="402" y="850" text-anchor="start">Yes</text>
+
+      <!-- P3 sign in redirect -->
+      <rect class="box n-create" x="238" y="902" width="284" height="66" rx="9"/>
+      <text class="t-node sm" x="380" y="929" text-anchor="middle">Signed in</text>
+      <text class="t-sub" x="380" y="950" text-anchor="middle">redirected by role: admin &middot; technician &middot; employee</text>
+
+      <path class="ln" marker-end="url(#a2)" d="M380,968 L380,996"/>
+
+      <!-- END -->
+      <rect class="box n-term" x="270" y="998" width="220" height="52" rx="26"/>
+      <text class="t-node" x="380" y="1029" text-anchor="middle">Role dashboard</text>
+    </svg>
+  </div>
+  <p class="caption">Figure 5.3 — Login flow: rate-limit gate, password check, and email one-time code, ending in a role-based redirect.</p>
+
+  <!-- ============================================================= -->
+  <!-- FIGURE 3 — TICKET STATE DIAGRAM (7 statuses)                  -->
+  <!-- ============================================================= -->
+  <style>
+    .n-open{fill:var(--surface-2);stroke:var(--slate);stroke-width:1.8;}
+    .n-active{fill:var(--surface);stroke:var(--green);stroke-width:1.9;}
+    .term-resolved{fill:var(--green-tint);stroke:var(--green-deep);stroke-width:2.4;}
+    .term-closed{fill:var(--surface-2);stroke:var(--slate);stroke-width:2.4;}
+    .term-rejected{fill:var(--surface);stroke:var(--rose);stroke-width:2.4;}
+    .ln-both{fill:none;stroke:var(--line-strong);stroke-width:2;}
+    .rail{fill:none;stroke:var(--line-strong);stroke-width:2;}
+    .dash-box{fill:none;stroke:var(--green);stroke-width:1.4;stroke-dasharray:6 5;opacity:.65;}
+    .keyrow{display:flex;flex-wrap:wrap;gap:14px 24px;margin-top:16px;font-size:12.5px;color:var(--ink-soft);}
+    .keyrow span b{color:var(--ink);font-weight:600;}
+  </style>
+
+  <h2>3 &nbsp;Ticket state machine <span style="font-weight:500;color:var(--ink-mute);font-size:15px;">(the seven statuses)</span></h2>
+  <p class="lead">Unlike the flow above, the statuses are not a straight line. A ticket sits in
+    one <em>state</em> at a time; the four <strong>active</strong> states can be moved between
+    freely, and the three <strong>terminal</strong> states permanently lock it. This is why the
+    lifecycle flowchart keeps the ending simple — the real status logic is a state machine, shown
+    here.</p>
+
+  <div class="frame">
+    <svg viewBox="0 0 880 650" role="img" aria-label="Ticket status state diagram">
+      <defs>
+        <marker id="s1" markerWidth="9" markerHeight="9" refX="7.2" refY="3" orient="auto"><path d="M0,0 L7.2,3 L0,6 Z" class="mk"/></marker>
+        <marker id="s2" markerWidth="9" markerHeight="9" refX="7.2" refY="3" orient="auto-start-reverse"><path d="M0,0 L7.2,3 L0,6 Z" class="mk"/></marker>
+      </defs>
+
+      <!-- initial pseudostate -->
+      <circle cx="440" cy="22" r="7" fill="var(--ink-mute)"/>
+      <path class="ln" marker-end="url(#s1)" d="M440,29 L440,52"/>
+
+      <!-- OPEN -->
+      <rect class="box n-open" x="356" y="54" width="168" height="52" rx="10"/>
+      <text class="t-node" x="440" y="78" text-anchor="middle">Open</text>
+      <text class="t-sub"  x="440" y="95" text-anchor="middle">awaiting a technician</text>
+
+      <!-- Open -> In Progress -->
+      <path class="ln" marker-end="url(#s1)" d="M440,106 L440,218"/>
+      <text class="t-lbl" x="452" y="168" text-anchor="start">picked / hand-assigned</text>
+
+      <!-- active group -->
+      <rect class="dash-box" x="55" y="200" width="780" height="100" rx="14"/>
+      <text class="t-lbl" x="68" y="194" text-anchor="start">Active states — the technician moves freely between them (but never back to Open)</text>
+
+      <rect class="box n-active" x="350" y="222" width="180" height="56" rx="10"/>
+      <text class="t-node sm" x="440" y="248" text-anchor="middle">In Progress</text>
+      <text class="t-sub"     x="440" y="265" text-anchor="middle">being worked on</text>
+
+      <rect class="box n-active" x="70" y="222" width="175" height="56" rx="10"/>
+      <text class="t-node sm" x="157" y="248" text-anchor="middle">On Hold</text>
+      <text class="t-sub"     x="157" y="265" text-anchor="middle">paused</text>
+
+      <rect class="box n-active" x="615" y="222" width="210" height="56" rx="10"/>
+      <text class="t-node sm" x="720" y="248" text-anchor="middle">Waiting for Resources</text>
+      <text class="t-sub"     x="720" y="265" text-anchor="middle">blocked on parts / approvals</text>
+
+      <!-- bidirectional active transitions -->
+      <path class="ln-both" marker-start="url(#s2)" marker-end="url(#s2)" d="M245,250 L350,250"/>
+      <path class="ln-both" marker-start="url(#s2)" marker-end="url(#s2)" d="M530,250 L615,250"/>
+
+      <!-- drops into a collecting rail -->
+      <path class="ln" d="M440,278 L440,428"/>
+      <path class="ln" d="M157,278 L157,428"/>
+      <path class="ln" d="M720,278 L720,428"/>
+      <path class="rail" d="M157,428 L720,428"/>
+      <text class="t-lbl" x="300" y="416" text-anchor="middle">any active state → a terminal state</text>
+
+      <!-- rail -> terminals -->
+      <path class="ln" marker-end="url(#s1)" d="M230,428 L230,518"/>
+      <path class="ln" marker-end="url(#s1)" d="M440,428 L440,518"/>
+      <path class="ln" marker-end="url(#s1)" d="M650,428 L650,518"/>
+
+      <!-- TERMINALS -->
+      <rect class="box term-resolved" x="140" y="520" width="180" height="56" rx="10"/>
+      <text class="t-node sm" x="230" y="546" text-anchor="middle">Resolved</text>
+      <text class="t-sub"     x="230" y="563" text-anchor="middle">issue fixed</text>
+
+      <rect class="box term-closed" x="350" y="520" width="180" height="56" rx="10"/>
+      <text class="t-node sm" x="440" y="546" text-anchor="middle">Closed</text>
+      <text class="t-sub"     x="440" y="563" text-anchor="middle">closed, no confirmed fix</text>
+
+      <rect class="box term-rejected" x="560" y="520" width="180" height="56" rx="10"/>
+      <text class="t-node sm" x="650" y="546" text-anchor="middle">Rejected</text>
+      <text class="t-sub"     x="650" y="563" text-anchor="middle">request declined</text>
+
+      <text class="t-lbl" x="440" y="606" text-anchor="middle">Terminal states are locked — no status, priority, or owner change, and no reopen.</text>
+    </svg>
+  </div>
+
+  <div class="keyrow">
+    <span><b>Rounded box</b> = a status the ticket can hold</span>
+    <span><b>Green dashed group</b> = active states (freely interchangeable)</span>
+    <span><b>Green / slate / rose</b> = the three terminal outcomes</span>
+  </div>
+
+  <p class="caption">Figure 5.4 — Ticket state machine: one Open entry, four freely-navigable active states, and three locking terminal outcomes.</p>
+</div>

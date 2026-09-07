@@ -1,0 +1,251 @@
+<title>IT Help Desk — System Block Diagram</title>
+<style>
+  :root{
+    --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75;
+    --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --green-tint:#e7f2ec;
+    --gold:#b4894a; --gold-tint:#f6efe2; --gold-deep:#8a6a34;
+    --slate:#5a6670; --slate-tint:#eef1f3;
+    --blue:#3a5f7d; --blue-tint:#e8eff4; --rose:#a4453a; --rose-tint:#f7ebe9;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);
+    --mono:ui-monospace,"Cascadia Code","Consolas",monospace;
+    --sans:"Segoe UI",system-ui,-apple-system,Arial,sans-serif;
+  }
+  @media (prefers-color-scheme:dark){
+    :root{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+      --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+      --green:#54ba8f; --green-deep:#6cc79f; --green-tint:#1d2f2a;
+      --gold:#cba869; --gold-tint:#2c2717; --slate:#93a0ab; --slate-tint:#242f38;
+      --blue:#7ea6c4; --blue-tint:#1e2c37; --rose:#d0776c; --rose-tint:#2f2320;
+      --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+  }
+  :root[data-theme="light"]{ --bg:#eef2ef; --surface:#ffffff; --surface-2:#f4f7f5;
+    --ink:#16241f; --ink-soft:#46554e; --ink-mute:#6f7d75; --line:#cdd8d1; --line-strong:#aebbb2;
+    --green:#0f7a57; --green-deep:#0a5f43; --green-tint:#e7f2ec; --gold:#b4894a; --gold-tint:#f6efe2;
+    --slate:#5a6670; --slate-tint:#eef1f3; --blue:#3a5f7d; --blue-tint:#e8eff4; --rose:#a4453a; --rose-tint:#f7ebe9;
+    --shadow:0 1px 2px rgba(16,40,30,.05),0 8px 22px rgba(16,40,30,.07);}
+  :root[data-theme="dark"]{ --bg:#10161a; --surface:#1b242b; --surface-2:#212c34;
+    --ink:#e7edea; --ink-soft:#b3c0ba; --ink-mute:#8b988f; --line:#31404a; --line-strong:#44535d;
+    --green:#54ba8f; --green-deep:#6cc79f; --green-tint:#1d2f2a; --gold:#cba869; --gold-tint:#2c2717;
+    --slate:#93a0ab; --slate-tint:#242f38; --blue:#7ea6c4; --blue-tint:#1e2c37; --rose:#d0776c; --rose-tint:#2f2320;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 10px 26px rgba(0,0,0,.4);}
+
+  *{box-sizing:border-box;}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.5;-webkit-font-smoothing:antialiased;}
+  .page{max-width:1000px;margin:0 auto;padding:44px 24px 64px;}
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.18em;text-transform:uppercase;color:var(--green);font-weight:600;margin:0 0 10px;}
+  h1{font-size:clamp(24px,3.6vw,32px);line-height:1.12;letter-spacing:-.02em;margin:0 0 12px;text-wrap:balance;font-weight:700;}
+  .sub{max-width:70ch;color:var(--ink-soft);font-size:15px;margin:0;}
+  .rule{height:3px;width:56px;margin-top:20px;background:linear-gradient(90deg,var(--green),var(--gold));border-radius:2px;}
+
+  h2{font-size:19px;font-weight:700;letter-spacing:-.01em;margin:48px 0 4px;}
+  .lead{max-width:72ch;color:var(--ink-soft);font-size:14.5px;margin:0 0 4px;}
+
+  .legend{display:flex;flex-wrap:wrap;gap:14px 24px;margin-top:24px;padding:15px 18px;background:var(--surface-2);border:1px solid var(--line);border-radius:12px;}
+  .legend div{display:flex;align-items:center;gap:9px;font-size:13px;color:var(--ink-soft);}
+  .chip{width:24px;height:16px;flex:0 0 auto;border-radius:5px;border:1.8px solid;}
+  .c-actor{border-color:var(--slate);background:var(--slate-tint);}
+  .c-laravel{border-color:var(--green);background:var(--green-tint);}
+  .c-data{border-color:var(--blue);background:var(--blue-tint);}
+  .c-ext{border-color:var(--gold);background:var(--gold-tint);}
+  .c-mail{border-color:var(--rose);background:var(--rose-tint);}
+
+  .frame{margin-top:22px;background:var(--surface);border:1px solid var(--line);border-radius:16px;box-shadow:var(--shadow);padding:22px 20px;overflow-x:auto;}
+  .stack{min-width:640px;display:flex;flex-direction:column;align-items:stretch;}
+
+  .tier{border:1px dashed var(--line-strong);border-radius:13px;padding:12px 14px 14px;background:var(--surface-2);}
+  .tier-label{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute);font-weight:600;margin:0 0 11px;}
+  .row{display:flex;flex-wrap:wrap;gap:11px;}
+
+  .blk{flex:1 1 auto;min-width:130px;border:1.8px solid var(--line-strong);border-radius:10px;background:var(--surface);padding:11px 13px;box-shadow:var(--shadow);}
+  .blk .bt{font-weight:650;font-size:13.5px;color:var(--ink);letter-spacing:-.01em;}
+  .blk .bs{display:block;margin-top:3px;font-size:11px;color:var(--ink-mute);line-height:1.35;}
+
+  .actor{border-color:var(--slate);background:var(--slate-tint);}
+  .laravel{border-color:var(--green);}
+  .laravel .bt{color:var(--green-deep);}
+  .wide{flex-basis:100%;}
+  .data{border-color:var(--blue);background:var(--blue-tint);}
+  .data .bt{color:var(--blue);}
+  .ext{border-color:var(--gold);background:var(--gold-tint);}
+  .ext .bt{color:var(--gold);}
+  .mailp{border-color:var(--rose);background:var(--rose-tint);}
+  .mailp .bt{color:var(--rose);}
+
+  /* vertical connector between tiers */
+  .flow{position:relative;height:38px;display:flex;align-items:center;justify-content:center;}
+  .flow::before{content:"";position:absolute;top:0;bottom:9px;left:50%;width:2px;transform:translateX(-50%);background:var(--line-strong);}
+  .flow::after{content:"";position:absolute;bottom:2px;left:50%;transform:translateX(-50%);border-left:6px solid transparent;border-right:6px solid transparent;border-top:8px solid var(--line-strong);}
+  .flow span{position:relative;z-index:1;background:var(--surface);border:1px solid var(--line);border-radius:20px;padding:2px 12px;font-family:var(--mono);font-size:11px;color:var(--ink-soft);font-weight:600;}
+
+  /* email pipeline: horizontal chain */
+  .chain{min-width:640px;display:flex;align-items:stretch;gap:0;flex-wrap:wrap;}
+  .chain .blk{min-width:120px;}
+  .arrow{flex:0 0 auto;align-self:center;display:flex;align-items:center;justify-content:center;padding:0 6px;color:var(--line-strong);font-size:20px;font-weight:700;}
+  .arrow small{font-family:var(--mono);font-size:10px;color:var(--ink-mute);font-weight:600;}
+  .col2{display:flex;flex-direction:column;gap:12px;}
+
+  .caption{margin-top:16px;font-size:12.5px;color:var(--ink-mute);font-style:italic;text-align:center;}
+  .note{margin-top:14px;font-size:13px;color:var(--ink-soft);max-width:74ch;}
+  .note b{color:var(--ink);}
+</style>
+
+<div class="page">
+  <p class="eyebrow">System Design &middot; Block Diagram</p>
+  <h1>IT Help Desk Ticket System — System Architecture</h1>
+  <p class="sub">A high-level block diagram of the system's building blocks and how a request
+    flows through them. The application follows Laravel's layered MVC structure: the browser talks
+    to server-rendered pages, every request passes through security middleware into a controller,
+    controllers ask a policy for permission and use Eloquent models to reach the database, and a
+    separate background pipeline turns inbound email into tickets and sends outbound mail.</p>
+  <div class="rule"></div>
+
+  <div class="legend" aria-label="Block type key">
+    <div><span class="chip c-actor"></span>User / external actor</div>
+    <div><span class="chip c-laravel"></span>Laravel component</div>
+    <div><span class="chip c-data"></span>Data store</div>
+    <div><span class="chip c-ext"></span>External service (Gmail)</div>
+    <div><span class="chip c-mail"></span>Mail / background job</div>
+  </div>
+
+  <!-- ============================================================ -->
+  <!-- 1. WEB REQUEST ARCHITECTURE (vertical layers)                -->
+  <!-- ============================================================ -->
+  <h2>1 &nbsp;Web request architecture</h2>
+  <p class="lead">The synchronous path a browser request travels, from the signed-in user down to
+    the database and back.</p>
+
+  <div class="frame">
+    <div class="stack">
+
+      <!-- Clients -->
+      <div class="tier">
+        <p class="tier-label">Clients &middot; browser</p>
+        <div class="row">
+          <div class="blk actor"><span class="bt">Employee</span><span class="bs">submits &amp; rates tickets</span></div>
+          <div class="blk actor"><span class="bt">Technician</span><span class="bs">claims, works, replies</span></div>
+          <div class="blk actor"><span class="bt">Admin</span><span class="bs">oversight &amp; user management</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>HTTPS</span></div>
+
+      <!-- Presentation -->
+      <div class="tier">
+        <p class="tier-label">Presentation layer</p>
+        <div class="row">
+          <div class="blk laravel wide"><span class="bt">Blade views + Tailwind CSS</span>
+            <span class="bs">Server-rendered HTML &middot; English / Arabic RTL &middot; light &amp; dark mode &middot; live-updating ticket lists</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>route</span></div>
+
+      <!-- Routing & middleware -->
+      <div class="tier">
+        <p class="tier-label">Routing &amp; security middleware</p>
+        <div class="row">
+          <div class="blk laravel"><span class="bt">Web routes</span><span class="bs">routes/web.php</span></div>
+          <div class="blk laravel"><span class="bt">Auth</span><span class="bs">must be signed in</span></div>
+          <div class="blk laravel"><span class="bt">Role (RBAC)</span><span class="bs">admin / agent / employee</span></div>
+          <div class="blk laravel"><span class="bt">Rate limiter</span><span class="bs">brute-force guard</span></div>
+          <div class="blk laravel"><span class="bt">SetLocale</span><span class="bs">EN / AR per session</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>dispatch</span></div>
+
+      <!-- Controllers -->
+      <div class="tier">
+        <p class="tier-label">Controllers &middot; application logic</p>
+        <div class="row">
+          <div class="blk laravel"><span class="bt">LoginController</span><span class="bs">password + email OTP 2FA</span></div>
+          <div class="blk laravel"><span class="bt">TicketController</span><span class="bs">employee: submit / view / rate</span></div>
+          <div class="blk laravel"><span class="bt">AgentTicketController</span><span class="bs">assign, status, priority, category</span></div>
+          <div class="blk laravel"><span class="bt">DashboardController</span><span class="bs">admin stats, ratings, report</span></div>
+          <div class="blk laravel"><span class="bt">UserController</span><span class="bs">manage accounts</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>authorize()</span></div>
+
+      <!-- Authorization -->
+      <div class="tier">
+        <p class="tier-label">Authorization</p>
+        <div class="row">
+          <div class="blk laravel wide"><span class="bt">Policies — TicketPolicy &middot; CommentPolicy</span>
+            <span class="bs">Per-action permission checks: who may view, assign, change status/priority/category, converse, reassign, delete</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>Eloquent</span></div>
+
+      <!-- Models -->
+      <div class="tier">
+        <p class="tier-label">Domain models (Eloquent ORM)</p>
+        <div class="row">
+          <div class="blk laravel"><span class="bt">User</span><span class="bs">role, department</span></div>
+          <div class="blk laravel"><span class="bt">Ticket</span><span class="bs">7-status state machine</span></div>
+          <div class="blk laravel"><span class="bt">Attachment</span><span class="bs">files per ticket</span></div>
+          <div class="blk laravel"><span class="bt">Comment</span><span class="bs">requester conversation</span></div>
+        </div>
+      </div>
+
+      <div class="flow"><span>SQL / disk I/O</span></div>
+
+      <!-- Data stores -->
+      <div class="tier">
+        <p class="tier-label">Persistence</p>
+        <div class="row">
+          <div class="blk data"><span class="bt">MySQL database</span><span class="bs">users, tickets, attachments, comments, pivots</span></div>
+          <div class="blk data"><span class="bt">Local file storage</span><span class="bs">private disk — uploaded attachments</span></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <p class="caption">Figure 5.5 — Layered web architecture: browser → middleware → controller → policy → model → data store.</p>
+
+  <!-- ============================================================ -->
+  <!-- 2. EMAIL & BACKGROUND PIPELINE (horizontal)                  -->
+  <!-- ============================================================ -->
+  <h2>2 &nbsp;Email intake &amp; background processing</h2>
+  <p class="lead">Running alongside the web app, an always-on listener turns inbound email into
+    tickets, and queued mail jobs send outbound notifications — none of it blocks the browser.</p>
+
+  <div class="frame">
+    <div class="chain">
+      <div class="col2">
+        <div class="blk actor"><span class="bt">External sender</span><span class="bs">emails the help-desk inbox</span></div>
+      </div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk ext"><span class="bt">Gmail IMAP</span><span class="bs">unseen messages</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk mailp"><span class="bt">tickets:fetch-emails --interval=5</span><span class="bs">polls every 5s</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk laravel"><span class="bt">EmailTicketIngester</span><span class="bs">detect priority/category, verify attachments</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk data"><span class="bt">Ticket created</span><span class="bs">status = Open</span></div>
+    </div>
+
+    <div class="flow"><span>on new ticket &middot; on reply</span></div>
+
+    <div class="chain">
+      <div class="blk laravel"><span class="bt">Mailables</span><span class="bs">OTP code, acknowledgement, admin alert, reply</span></div>
+      <div class="arrow"><small>queue</small>&nbsp;&rarr;</div>
+      <div class="blk mailp"><span class="bt">Database queue</span><span class="bs">drained by the listener cycle</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk ext"><span class="bt">Gmail SMTP</span><span class="bs">outbound delivery</span></div>
+      <div class="arrow">&rarr;</div>
+      <div class="blk actor"><span class="bt">Recipient inbox</span><span class="bs">requester / admin</span></div>
+    </div>
+  </div>
+  <p class="caption">Figure 5.6 — Asynchronous email pipeline: inbound mail becomes a ticket; outbound notifications are queued and sent via SMTP.</p>
+
+  <p class="note"><b>Reading the diagram:</b> solid tiers are the layers of one Laravel application —
+    the same framework hosts the controllers, policies, models, and the console commands. MySQL and
+    the local file disk are the only persistent stores. Gmail (IMAP in, SMTP out) is the sole
+    external dependency, reached only through the background pipeline so that a slow or offline mail
+    server never delays a user's page.</p>
+</div>

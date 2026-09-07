@@ -1,0 +1,36 @@
+*.log
+.DS_Store
+.env
+.env.backup
+.env.production
+.phpactor.json
+.phpunit.result.cache
+/.fleet
+/.idea
+/.nova
+/.phpunit.cache
+/.vscode
+/.zed
+/auth.json
+/node_modules
+/public/build
+/public/hot
+/public/storage
+/storage/*.key
+/storage/pail
+/vendor
+Homestead.json
+Homestead.yaml
+Thumbs.db
+
+# Local development/AI tooling — not part of the application
+/.claude
+CLAUDE.md
+helpdesk-full-code.txt
+skills-lock.json
+scripts/bundle-code.ps1
+docs/fetch-emails-explained.rtl.md
+
+# local DB env backup — contains real secrets, never commit
+.env.mysql.bak
+.env.*.bak
